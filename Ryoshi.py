@@ -13,7 +13,7 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.title("Ryōshi.py")
-        self.geometry(f"{1100}x{680}")
+        self.geometry(f"{1200}x{780}")
         self.resizable(False, False)
         customtkinter.set_appearance_mode("dark")
 
@@ -77,6 +77,7 @@ class App(customtkinter.CTk):
         self.send_mail_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.send_mail_frame.grid(row=0, column=0, sticky="nsew")
 
+
         # -------------------------------------------- #
 
         # first line frame
@@ -86,14 +87,15 @@ class App(customtkinter.CTk):
         # label + entry mail smtp server
         self.label_mail_smtp_server = customtkinter.CTkLabel(master=self.first_line_frame, text="SMTP E-Mail:", justify=customtkinter.LEFT)
         self.label_mail_smtp_server.grid(row=0, column=0, pady=(20,0), padx=(20, 5))
-        self.entry_mail_smtp_server = customtkinter.CTkEntry(master=self.first_line_frame, width=200)
+        self.entry_mail_smtp_server = customtkinter.CTkEntry(master=self.first_line_frame, width=300)
         self.entry_mail_smtp_server.grid(row=0, column=1, pady=(20,0), padx=0)
 
         # label + entry password smtp server
         self.label_passsword_smtp_server = customtkinter.CTkLabel(master=self.first_line_frame, text="Password:", justify=customtkinter.LEFT)
         self.label_passsword_smtp_server.grid(row=0, column=2, pady=(20,0), padx=(20, 5))
-        self.entry_passsword_smtp_server = customtkinter.CTkEntry(master=self.first_line_frame, show="\u25CF", width=200)
+        self.entry_passsword_smtp_server = customtkinter.CTkEntry(master=self.first_line_frame, show="\u25CF", width=300)
         self.entry_passsword_smtp_server.grid(row=0, column=3, pady=(20,0), padx=0)
+
 
         # -------------------------------------------- #
 
@@ -104,13 +106,13 @@ class App(customtkinter.CTk):
         # label + entry smtp server
         self.label_smtp_server = customtkinter.CTkLabel(master=self.second_line_frame, text="SMTP Server:", justify=customtkinter.LEFT)
         self.label_smtp_server.grid(row=0, column=0, pady=0, padx=(20, 5))
-        self.entry_smtp_server = customtkinter.CTkEntry(master=self.second_line_frame, width=200)
+        self.entry_smtp_server = customtkinter.CTkEntry(master=self.second_line_frame, width=300)
         self.entry_smtp_server.grid(row=0, column=1, pady=0, padx=0)
 
         # label + entry port smtp server
         self.label_port_smtp_server = customtkinter.CTkLabel(master=self.second_line_frame, text="Port:", justify=customtkinter.LEFT)
         self.label_port_smtp_server.grid(row=0, column=2, pady=0, padx=(20,5))
-        self.entry_port_smtp_server = customtkinter.CTkEntry(master=self.second_line_frame, width=60)
+        self.entry_port_smtp_server = customtkinter.CTkEntry(master=self.second_line_frame, width=80)
         self.entry_port_smtp_server.grid(row=0, column=3, pady=0, padx=0)
 
         # button login smtp server
@@ -124,12 +126,19 @@ class App(customtkinter.CTk):
             self.label_port_smtp_server.configure(state="disabled")
             self.entry_port_smtp_server.configure(state="disabled")
             self.login_smtp_server.configure(state="disabled")
+            self.from_name_label.configure(state="normal")
+            self.from_name_entry.configure(state="normal")
             self.from_mail_label.configure(state="normal")
             self.from_mail_entry.configure(state="normal")
-            self.to_mail_label.configure(state="normal")
-            self.to_mail_entry.configure(state="normal")
             self.subject_label.configure(state="normal")
             self.subject_entry.configure(state="normal")
+            self.to_mail_label.configure(state="normal")
+            self.to_mail_entry.configure(state="normal")
+            self.cc_label.configure(state="normal")
+            self.cc_entry.configure(state="normal")
+            self.bcc_label.configure(state="normal")
+            self.bcc_entry.configure(state="normal")
+            self.HTML_checkbox.configure(state="normal")
             self.add_images.configure(state="normal")
             self.images_label.configure(state="normal")
             self.images_entry.configure(state="normal")
@@ -137,8 +146,11 @@ class App(customtkinter.CTk):
             self.attachments_label.configure(state="normal")
             self.attachments_entry.configure(state="normal")
             self.body_mail.configure(state="normal")
+            self.body_mail.delete("0.0", "end")
             self.body_mail.insert("0.0", "Mail text here\n\n")
             self.send_mail_button.configure(state="normal")
+            self.results_label.configure(state="normal")
+            self.results_textbox.configure(state="normal")
 
 
         def login_smtp_server():
@@ -154,11 +166,12 @@ class App(customtkinter.CTk):
                 success_login()        
             except Exception as e:
                 self.body_mail.configure(state="normal")
-                self.body_mail.insert("0.0", e)
+                self.body_mail.insert("0.0", "Error: "+str(e)+"\n")
 
 
-        self.login_smtp_server = customtkinter.CTkButton(master=self.second_line_frame, text="Login", command=login_smtp_server)
+        self.login_smtp_server = customtkinter.CTkButton(master=self.second_line_frame, text="Login", command=login_smtp_server, width=220)
         self.login_smtp_server.grid(row=0, column=4, pady=20, padx=(30,0))
+
 
         # -------------------------------------------- #
 
@@ -166,110 +179,145 @@ class App(customtkinter.CTk):
         self.third_line_frame = customtkinter.CTkFrame(self.send_mail_frame, corner_radius=0, fg_color="transparent")
         self.second_line_frame.grid_columnconfigure(6, weight=1)
 
+        # label + entry "From name"
+        self.from_name_label = customtkinter.CTkLabel(master=self.third_line_frame, text="From Name:", state="disabled")
+        self.from_name_label.grid(row=0, column=0, pady=(20,0), padx=(20,5))
+        self.from_name_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=220, state="disabled")
+        self.from_name_entry.grid(row=0, column=1, pady=(20,0), padx=0)
+
         # label + entry "From mail"
         self.from_mail_label = customtkinter.CTkLabel(master=self.third_line_frame, text="From Mail:", state="disabled")
-        self.from_mail_label.grid(row=0, column=0, pady=(20,0), padx=(20,5))
-        self.from_mail_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=188, state="disabled")
-        self.from_mail_entry.grid(row=0, column=1, pady=(20,0), padx=0)
-
-        # label + entry "To mail"
-        self.to_mail_label = customtkinter.CTkLabel(master=self.third_line_frame, text="To Mail:", state="disabled")
-        self.to_mail_label.grid(row=0, column=2, pady=(20,0), padx=(20,5))
-        self.to_mail_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=188, state="disabled")
-        self.to_mail_entry.grid(row=0, column=3, pady=(20,0), padx=0)
+        self.from_mail_label.grid(row=0, column=2, pady=(20,0), padx=(20,5))
+        self.from_mail_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=220, state="disabled")
+        self.from_mail_entry.grid(row=0, column=3, pady=(20,0), padx=0)
 
         # label + entry "Subject"
         self.subject_label = customtkinter.CTkLabel(master=self.third_line_frame, text="Subject:", state="disabled")
         self.subject_label.grid(row=0, column=4, pady=(20,0), padx=(20,5))
-        self.subject_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=300, state="disabled")
+        self.subject_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=310, state="disabled")
         self.subject_entry.grid(row=0, column=5, pady=(20,0), padx=0)
 
-        """
-        # label + entry "CC"
-        self.cc_label = customtkinter.CTkLabel(master=self.third_line_frame, text="CC:", state="disabled")
-        self.cc_label.grid(row=0, column=4, pady=(20,0), padx=(20,5))
-        self.cc_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=150, state="disabled")
-        self.cc_entry.grid(row=0, column=5, pady=(20,0), padx=0)
-
-        # label + entry "BCC"
-        self.bcc_label = customtkinter.CTkLabel(master=self.third_line_frame, text="BCC:", state="disabled")
-        self.bcc_label.grid(row=0, column=6, pady=(20,0), padx=(20,5))
-        self.bcc_entry = customtkinter.CTkEntry(master=self.third_line_frame, width=150, state="disabled")
-        self.bcc_entry.grid(row=0, column=7, pady=(20,0), padx=0)
-        """
 
         # -------------------------------------------- #
 
         # fourth line frame
         self.fourth_line_frame = customtkinter.CTkFrame(self.send_mail_frame, corner_radius=0, fg_color="transparent")
-        self.fourth_line_frame.grid_columnconfigure(6, weight=1)
+        self.fourth_line_frame.grid_columnconfigure(7, weight=1)
+
+        # label + entry "To mail"
+        self.to_mail_label = customtkinter.CTkLabel(master=self.fourth_line_frame, text="To Mail:", state="disabled")
+        self.to_mail_label.grid(row=0, column=0, pady=(20,0), padx=(20,5))
+        self.to_mail_entry = customtkinter.CTkEntry(master=self.fourth_line_frame, width=220, state="disabled")
+        self.to_mail_entry.grid(row=0, column=1, pady=(20,0), padx=0)
+
+        # label + entry "CC"
+        self.cc_label = customtkinter.CTkLabel(master=self.fourth_line_frame, text="CC:", state="disabled")
+        self.cc_label.grid(row=0, column=2, pady=(20,0), padx=(20,5))
+        self.cc_entry = customtkinter.CTkEntry(master=self.fourth_line_frame, width=220, state="disabled")
+        self.cc_entry.grid(row=0, column=3, pady=(20,0), padx=0)
+
+        # label + entry "BCC"
+        self.bcc_label = customtkinter.CTkLabel(master=self.fourth_line_frame, text="BCC:", state="disabled")
+        self.bcc_label.grid(row=0, column=4, pady=(20,0), padx=(20,5))
+        self.bcc_entry = customtkinter.CTkEntry(master=self.fourth_line_frame, width=220, state="disabled")
+        self.bcc_entry.grid(row=0, column=5, pady=(20,0), padx=0)
+
+        # checkbox HTML
+        self.HTML_checkbox = customtkinter.CTkCheckBox(master=self.fourth_line_frame, text="HTML", state="disabled")
+        self.HTML_checkbox.grid(row=0, column=6, pady=(20, 0), padx=30)
+        
+
+        # -------------------------------------------- #
+
+        # fivth line frame
+        self.fivth_line_frame = customtkinter.CTkFrame(self.send_mail_frame, corner_radius=0, fg_color="transparent")
+        self.fivth_line_frame.grid_columnconfigure(8, weight=1)   
 
         # button "Add Images"
         def add_image():
             print("Images")
 
-        self.add_images = customtkinter.CTkButton(master=self.fourth_line_frame, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"), text="Add Image", command=add_image, state="disabled")
+        self.add_images = customtkinter.CTkButton(master=self.fivth_line_frame, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"), text="Add Image", command=add_image, state="disabled")
         self.add_images.grid(row=0, column=0, pady=(20,0), padx=(20,0))
 
-        # label + entry disbled "Images"
-        self.images_label = customtkinter.CTkLabel(master=self.fourth_line_frame, text="Images:", state="disabled")
+        # label + entry disabled "Images"
+        self.images_label = customtkinter.CTkLabel(master=self.fivth_line_frame, text="Images:", state="disabled")
         self.images_label.grid(row=0, column=1, pady=(20,0), padx=(10,5))
-        self.images_entry = customtkinter.CTkEntry(master=self.fourth_line_frame, width=207, state="disabled")
+        self.images_entry = customtkinter.CTkEntry(master=self.fivth_line_frame, width=255, state="disabled")
         self.images_entry.grid(row=0, column=2, pady=(20,0), padx=0)
 
         # button "Add Attachment"
         def add_attachment():
             print("Attachments")
 
-        self.add_attachments = customtkinter.CTkButton(master=self.fourth_line_frame, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"), text="Add Attachment", command=add_attachment, state="disabled")
+        self.add_attachments = customtkinter.CTkButton(master=self.fivth_line_frame, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"), text="Add Attachment", command=add_attachment, state="disabled")
         self.add_attachments.grid(row=0, column=3, pady=(20,0), padx=(35,0))
 
-        # label + entry disbled "Attachments"
-        self.attachments_label = customtkinter.CTkLabel(master=self.fourth_line_frame, text="Attachments:", state="disabled")
+        # label + entry disabled "Attachments"
+        self.attachments_label = customtkinter.CTkLabel(master=self.fivth_line_frame, text="Attachments:", state="disabled")
         self.attachments_label.grid(row=0, column=4, pady=(20,0), padx=(10,5))
-        self.attachments_entry = customtkinter.CTkEntry(master=self.fourth_line_frame, width=207, state="disabled")
+        self.attachments_entry = customtkinter.CTkEntry(master=self.fivth_line_frame, width=255, state="disabled")
         self.attachments_entry.grid(row=0, column=5, pady=(20,0), padx=0)
 
-        # -------------------------------------------- #
-
-        # fivth line frame
-        self.fivth_line_frame = customtkinter.CTkFrame(self.send_mail_frame, corner_radius=0, fg_color="transparent")
-        self.fivth_line_frame.grid_columnconfigure(1, weight=1)   
-
-        # body of the mail
-        self.body_mail = customtkinter.CTkTextbox(master=self.fivth_line_frame, width=880, height=350, state="disabled")
-        self.body_mail.grid(row=0, column=0, padx=20, pady=20)
         
-
         # -------------------------------------------- #
 
         # sixth line frame
         self.sixth_line_frame = customtkinter.CTkFrame(self.send_mail_frame, corner_radius=0, fg_color="transparent")
         self.sixth_line_frame.grid_columnconfigure(2, weight=1)  
 
-        # button "Send Mail"
+        # body of the mail
+        self.body_mail = customtkinter.CTkTextbox(master=self.sixth_line_frame, width=975, height=400, state="disabled")
+        self.body_mail.grid(row=0, column=0, padx=20, pady=20)
+
+
+        # -------------------------------------------- #
+
+        # seventh line frame
+        self.seventh_line_frame = customtkinter.CTkFrame(self.send_mail_frame, corner_radius=0, fg_color="transparent")
+        self.seventh_line_frame.grid_columnconfigure(3, weight=1)  
+
+        # function "Send Mail"
         def send_mail():
-            msg = MIMEMultipart('alternative')   
-            sender = self.from_mail_entry.get()
-            mailTo = self.to_mail_entry.get()
-            subject = self.subject_entry.get()  
-            print("Sender :", sender)   
-            print("MailTo :", mailTo)  
-            print("Subject :", subject)   
-            msg['From'] = sender
-            msg['To'] = mailTo
-            msg['Subject'] = subject
-            msg.attach(MIMEText(self.body_mail.get('1.0', customtkinter.END), 'plain'))
-            text=msg.as_string()
-            ssl_context = ssl.create_default_context()
-            s = smtplib.SMTP(self.entry_smtp_server.get(), self.entry_port_smtp_server.get())
-            s.starttls(context=ssl_context)
-            s.login(self.entry_mail_smtp_server.get(), self.entry_passsword_smtp_server.get())
-            s.sendmail(sender, mailTo, text)
-            
-        self.send_mail_button = customtkinter.CTkButton(master=self.sixth_line_frame, border_width=1, text="Send Mail", command=send_mail, width=880, height=40, state="disabled")
+            try: 
+                msg = MIMEMultipart('alternative')   
+                sender = self.from_name_entry.get() + "<" + self.from_mail_entry.get() + ">"
+                mailTo = self.to_mail_entry.get()
+                mailCC = self.cc_entry.get()
+                mailBCC = self.bcc_entry.get()
+                subject = self.subject_entry.get()  
+                recipients = mailTo.split(",") + mailCC.split(",") + mailBCC.split(",")
+                formatMail = ''
+                if self.HTML_checkbox.get() == 0:
+                    formatMail = 'plain'
+                else:
+                    formatMail = 'html'
+                msg['From'] = sender
+                msg['To'] = mailTo
+                msg['CC'] = mailCC
+                msg['Subject'] = subject
+                msg.attach(MIMEText(self.body_mail.get('0.0', 'end'), formatMail))
+                text=msg.as_string()
+                ssl_context = ssl.create_default_context()
+                s = smtplib.SMTP(self.entry_smtp_server.get(), self.entry_port_smtp_server.get())
+                s.starttls(context=ssl_context)
+                s.login(self.entry_mail_smtp_server.get(), self.entry_passsword_smtp_server.get())
+                s.sendmail(sender, recipients, text)   
+                self.results_textbox.delete("0.0", "end")
+                self.results_textbox.insert("0.0", "Mail sent !\n")    
+            except Exception as e:
+                self.results_textbox.insert("0.0", "Error: "+str(e)+"\n")
+
+
+        # Send mail button
+        self.send_mail_button = customtkinter.CTkButton(master=self.seventh_line_frame, border_width=1, text="Send Mail", command=send_mail, width=275, height=50, state="disabled")
         self.send_mail_button.grid(row=0, column=0, pady=0, padx=20)
 
+        # label + entry disabled "Results"
+        self.results_label = customtkinter.CTkLabel(master=self.seventh_line_frame, text="Results:", state="disabled")
+        self.results_label.grid(row=0, column=1, pady=0, padx=(10,5))
+        self.results_textbox = customtkinter.CTkTextbox(master=self.seventh_line_frame, width=620, height=50, state="disabled")
+        self.results_textbox.grid(row=0, column=2, pady=0, padx=0)
 
 
 
@@ -304,6 +352,7 @@ class App(customtkinter.CTk):
             self.fourth_line_frame.grid(row=4, column=1, sticky="nsew")
             self.fivth_line_frame.grid(row=5, column=1, sticky="nsew")
             self.sixth_line_frame.grid(row=6, column=1, sticky="nsew")
+            self.seventh_line_frame.grid(row=7, column=1, sticky="nsew")
         else:
             self.send_mail_frame.grid_forget()
         if name == "frame_2":
