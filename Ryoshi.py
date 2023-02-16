@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from tkinter import filedialog
+import subprocess
 
 
 
@@ -28,8 +29,6 @@ class App(customtkinter.CTk):
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo_ryoshi.png")), size=(50, 50))
-        self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "large_test_image.png")), size=(500, 150))
-        self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "image_icon_light.png")), size=(20, 20))
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "mail_send_dark.png")),
                                                  dark_image=Image.open(os.path.join(image_path, "mail_send_white.png")), size=(30, 22))
         self.chat_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "craft_dark.png")),
@@ -349,11 +348,87 @@ class App(customtkinter.CTk):
 
 
 
-        # create second frame
-        self.second_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        # -------------------------------------------- #
 
-        # create third frame
-        self.third_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        # create craft frame
+        self.craft_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.craft_frame.grid(row=0, column=0, sticky="nsew")
+
+
+
+
+
+
+        # -------------------------------------------- #
+
+        # create verify frame
+        self.verify_mail_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.verify_mail_frame.grid(row=0, column=0, sticky="nsew")
+
+
+        # -------------------------------------------- #
+
+        # first line verify frame
+        self.first_line_verify_frame = customtkinter.CTkFrame(self.verify_mail_frame, corner_radius=0, fg_color="transparent")
+        self.first_line_verify_frame.grid_columnconfigure(3, weight=1)
+
+        # label + entry verify mail
+        self.label_verify_mail = customtkinter.CTkLabel(master=self.first_line_verify_frame, text="Mail to verify:", justify=customtkinter.LEFT)
+        self.label_verify_mail.grid(row=0, column=0, pady=(20,0), padx=(20, 5))
+        self.entry_verify_mail = customtkinter.CTkEntry(master=self.first_line_verify_frame, width=300)
+        self.entry_verify_mail.grid(row=0, column=1, pady=(20,0), padx=0)
+
+        # function verify mail
+        def verify_mail():
+            mail = self.entry_verify_mail.get()
+            holehe_results = subprocess.getoutput("holehe " + mail + " --only-used").split('\n')
+            results = '****************************************\n' + mail + '\n****************************************\n\n'
+            found = 0
+            for line in holehe_results:
+                if line.startswith("[+]") and not line.startswith("[+] Email used"):
+                    if found == 0:
+                        results += "----- Mail found on: -----\n\n" + line + "\n"
+                    else:
+                        results += line + "\n"
+                    found += 1
+            if found == 0:
+                results += "This mail seems to be wrong"
+            self.results_holehe.delete("0.0", "end")
+            self.results_holehe.insert("0.0", results) 
+
+        # Verify button
+        self.verify_button = customtkinter.CTkButton(master=self.first_line_verify_frame, border_width=1, text="Verify Mail", command=verify_mail)
+        self.verify_button.grid(row=0, column=2, pady=(20,0), padx=20)
+
+
+        # -------------------------------------------- #
+
+        # second line verify frame
+        self.second_line_verify_frame = customtkinter.CTkFrame(self.verify_mail_frame, corner_radius=0, fg_color="transparent")
+        self.second_line_verify_frame.grid_columnconfigure(1, weight=1)  
+
+        # image powered by Holehe
+        self.holehe_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "holehe.png")), size=(600, 200))
+        self.holehe_image_label = customtkinter.CTkLabel(self.second_line_verify_frame, text="", image=self.holehe_image)
+        self.holehe_image_label.grid(row=0, column=1, padx=20, pady=(30,10))
+
+
+        # -------------------------------------------- #
+
+        # second line verify frame
+        self.third_line_verify_frame = customtkinter.CTkFrame(self.verify_mail_frame, corner_radius=0, fg_color="transparent")
+        self.third_line_verify_frame.grid_columnconfigure(1, weight=1) 
+
+        # results of holehe
+        self.results_holehe = customtkinter.CTkTextbox(master=self.third_line_verify_frame, width=975, height=400)
+        self.results_holehe.grid(row=0, column=0, padx=20, pady=20)
+
+
+        # -------------------------------------------- #
+
+
+
+
 
         # select default frame
         self.select_frame_by_name("send_mail")
@@ -361,8 +436,8 @@ class App(customtkinter.CTk):
     def select_frame_by_name(self, name):
         # set button color for selected button
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "send_mail" else "transparent")
-        self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
-        self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
+        self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "craft_mail" else "transparent")
+        self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "verify_mail" else "transparent")
 
         # show selected frame
         if name == "send_mail":
@@ -376,23 +451,26 @@ class App(customtkinter.CTk):
             self.seventh_line_frame.grid(row=7, column=1, sticky="nsew")
         else:
             self.send_mail_frame.grid_forget()
-        if name == "frame_2":
-            self.second_frame.grid(row=0, column=1, sticky="nsew")
+        if name == "craft_mail":
+            self.craft_frame.grid(row=0, column=1, sticky="nsew")
         else:
-            self.second_frame.grid_forget()
-        if name == "frame_3":
-            self.third_frame.grid(row=0, column=1, sticky="nsew")
+            self.craft_frame.grid_forget()
+        if name == "verify_mail":
+            self.verify_mail_frame.grid(row=0, column=1, sticky="nsew")
+            self.first_line_verify_frame.grid(row=1, column=1, sticky="nsew")
+            self.second_line_verify_frame.grid(row=2, column=1, sticky="nsew")
+            self.third_line_verify_frame.grid(row=3, column=1, sticky="nsew")
         else:
-            self.third_frame.grid_forget()
+            self.verify_mail_frame.grid_forget()
 
     def home_button_event(self):
         self.select_frame_by_name("send_mail")
 
     def frame_2_button_event(self):
-        self.select_frame_by_name("frame_2")
+        self.select_frame_by_name("craft_mail")
 
     def frame_3_button_event(self):
-        self.select_frame_by_name("frame_3")
+        self.select_frame_by_name("verify_mail")
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
