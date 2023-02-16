@@ -1,10 +1,14 @@
 import customtkinter
 import os
+from os.path import basename
 import smtplib
 import ssl
+from datetime import datetime
 from PIL import Image
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from tkinter import filedialog
 
 
 
@@ -15,7 +19,7 @@ class App(customtkinter.CTk):
         self.title("Ryōshi.py")
         self.geometry(f"{1200}x{780}")
         self.resizable(False, False)
-        customtkinter.set_appearance_mode("dark")
+        customtkinter.set_appearance_mode("dark")  
 
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
@@ -26,12 +30,12 @@ class App(customtkinter.CTk):
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo_ryoshi.png")), size=(50, 50))
         self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "large_test_image.png")), size=(500, 150))
         self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "image_icon_light.png")), size=(20, 20))
-        self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "home_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "home_light.png")), size=(20, 20))
-        self.chat_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "chat_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "chat_light.png")), size=(20, 20))
-        self.add_user_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(20, 20))
+        self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "mail_send_dark.png")),
+                                                 dark_image=Image.open(os.path.join(image_path, "mail_send_white.png")), size=(30, 22))
+        self.chat_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "craft_dark.png")),
+                                                 dark_image=Image.open(os.path.join(image_path, "craft_white.png")), size=(30, 22))
+        self.add_user_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "verify_dark.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "verify_white.png")), size=(30, 28))
 
         # create navigation frame
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
@@ -42,17 +46,17 @@ class App(customtkinter.CTk):
                                                              compound="left", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
 
-        self.home_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Home",
+        self.home_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Send Mail",
                                                    fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
                                                    image=self.home_image, anchor="w", command=self.home_button_event)
         self.home_button.grid(row=1, column=0, sticky="ew")
 
-        self.frame_2_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Frame 2",
+        self.frame_2_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Craft Mail",
                                                       fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
                                                       image=self.chat_image, anchor="w", command=self.frame_2_button_event)
         self.frame_2_button.grid(row=2, column=0, sticky="ew")
 
-        self.frame_3_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Frame 3",
+        self.frame_3_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Verify Mail",
                                                       fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
                                                       image=self.add_user_image, anchor="w", command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
@@ -149,8 +153,6 @@ class App(customtkinter.CTk):
             self.body_mail.delete("0.0", "end")
             self.body_mail.insert("0.0", "Mail text here\n\n")
             self.send_mail_button.configure(state="normal")
-            self.results_label.configure(state="normal")
-            self.results_textbox.configure(state="normal")
 
 
         def login_smtp_server():
@@ -163,10 +165,10 @@ class App(customtkinter.CTk):
                 s = smtplib.SMTP(smtp_server, port)
                 s.starttls(context=ssl_context)
                 s.login(login, password)
-                success_login()        
+                success_login()      
+                self.logs_textbox.insert("0.0", datetime.now().strftime('%H:%M:%S')  + " - Login Successfully !\n")    
             except Exception as e:
-                self.body_mail.configure(state="normal")
-                self.body_mail.insert("0.0", "Error: "+str(e)+"\n")
+                self.logs_textbox.insert("0.0", datetime.now().strftime('%H:%M:%S') + " - Error: "+str(e)+"\n")
 
 
         self.login_smtp_server = customtkinter.CTkButton(master=self.second_line_frame, text="Login", command=login_smtp_server, width=220)
@@ -247,8 +249,18 @@ class App(customtkinter.CTk):
         self.images_entry.grid(row=0, column=2, pady=(20,0), padx=0)
 
         # button "Add Attachment"
+        attachments = []
         def add_attachment():
-            print("Attachments")
+            file = filedialog.askopenfilename(title = "Select a File", filetypes = (("all files", "*.*"), ("all files", "*.*")))
+            attachment = MIMEApplication(open(file, 'rb').read())
+            filename = basename(file)
+            attachment.add_header('Content-Disposition', 'attachment', filename=filename)
+            self.attachments_label.configure(state="normal")
+            self.attachments_entry.configure(state="normal")
+            self.attachments_entry.insert(0, filename + ", ")
+            attachments.append(attachment)
+            self.logs_textbox.insert("0.0", datetime.now().strftime('%H:%M:%S')  + " - Add Attachment : " + filename + "\n")   
+            
 
         self.add_attachments = customtkinter.CTkButton(master=self.fivth_line_frame, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"), text="Add Attachment", command=add_attachment, state="disabled")
         self.add_attachments.grid(row=0, column=3, pady=(20,0), padx=(35,0))
@@ -280,7 +292,7 @@ class App(customtkinter.CTk):
         # function "Send Mail"
         def send_mail():
             try: 
-                msg = MIMEMultipart('alternative')   
+                msg = MIMEMultipart('mixed')
                 sender = self.from_name_entry.get() + "<" + self.from_mail_entry.get() + ">"
                 mailTo = self.to_mail_entry.get()
                 mailCC = self.cc_entry.get()
@@ -296,17 +308,19 @@ class App(customtkinter.CTk):
                 msg['To'] = mailTo
                 msg['CC'] = mailCC
                 msg['Subject'] = subject
-                msg.attach(MIMEText(self.body_mail.get('0.0', 'end'), formatMail))
-                text=msg.as_string()
+                text = MIMEText(self.body_mail.get('0.0', 'end'), formatMail)
+                msg.attach(text)
+                for a in attachments:
+                    msg.attach(a)
+                print(msg)
                 ssl_context = ssl.create_default_context()
                 s = smtplib.SMTP(self.entry_smtp_server.get(), self.entry_port_smtp_server.get())
                 s.starttls(context=ssl_context)
                 s.login(self.entry_mail_smtp_server.get(), self.entry_passsword_smtp_server.get())
-                s.sendmail(sender, recipients, text)   
-                self.results_textbox.delete("0.0", "end")
-                self.results_textbox.insert("0.0", "Mail sent !\n")    
+                s.sendmail(sender, recipients, msg.as_string())  
+                self.logs_textbox.insert("0.0", datetime.now().strftime('%H:%M:%S') + " - Mail sent !\n")    
             except Exception as e:
-                self.results_textbox.insert("0.0", "Error: "+str(e)+"\n")
+                self.logs_textbox.insert("0.0", datetime.now().strftime('%H:%M:%S') + " - Error: "+str(e)+"\n")
 
 
         # Send mail button
@@ -314,15 +328,22 @@ class App(customtkinter.CTk):
         self.send_mail_button.grid(row=0, column=0, pady=0, padx=20)
 
         # label + entry disabled "Results"
-        self.results_label = customtkinter.CTkLabel(master=self.seventh_line_frame, text="Results:", state="disabled")
-        self.results_label.grid(row=0, column=1, pady=0, padx=(10,5))
-        self.results_textbox = customtkinter.CTkTextbox(master=self.seventh_line_frame, width=620, height=50, state="disabled")
-        self.results_textbox.grid(row=0, column=2, pady=0, padx=0)
+        self.logs_label = customtkinter.CTkLabel(master=self.seventh_line_frame, text="Logs:")
+        self.logs_label.grid(row=0, column=1, pady=0, padx=(10,5))
+        self.logs_textbox = customtkinter.CTkTextbox(master=self.seventh_line_frame, width=632, height=50)
+        self.logs_textbox.grid(row=0, column=2, pady=0, padx=0)
 
 
 
         # https://www.youtube.com/watch?v=xB6u9zeRMpY
         # https://github.com/TomSchimansky/CustomTkinter/wiki/
+
+        # https://support.google.com/mail/answer/1311182?hl=fr#null
+        # https://support.google.com/mail/answer/81126
+        # https://support.google.com/mail/answer/81126#auth-reqs
+
+        # https://www.alibabacloud.com/help/en/directmail/latest/how-can-i-send-emails-with-attachments-using-smtp
+
 
 
 
@@ -377,8 +398,19 @@ class App(customtkinter.CTk):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
     def change_scaling_event(self, new_scaling: str):
-        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        new_scale = new_scaling.replace("%", "")
+        new_scaling_float = int(new_scale) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
+        if new_scale == "80":
+            self.geometry(f"{960}x{620}")
+        elif new_scale == "90":
+            self.geometry(f"{1100}x{700}")
+        elif new_scale == "100":
+            self.geometry(f"{1200}x{780}")
+        elif new_scale == "110":
+            self.geometry(f"{1320}x{850}")
+        elif new_scale == "120":
+            self.geometry(f"{1450}x{930}")
         
 
 
