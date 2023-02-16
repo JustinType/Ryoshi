@@ -323,7 +323,7 @@ class App(customtkinter.CTk):
 
 
         # Send mail button
-        self.send_mail_button = customtkinter.CTkButton(master=self.seventh_line_frame, border_width=1, text="Send Mail", command=send_mail, width=275, height=50, state="disabled")
+        self.send_mail_button = customtkinter.CTkButton(master=self.seventh_line_frame, border_width=1, text="Send Mail", command=send_mail, width=270, height=55, state="disabled")
         self.send_mail_button.grid(row=0, column=0, pady=0, padx=20)
 
         # label + entry disabled "Results"
