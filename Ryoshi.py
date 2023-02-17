@@ -142,9 +142,6 @@ class App(customtkinter.CTk):
             self.bcc_label.configure(state="normal")
             self.bcc_entry.configure(state="normal")
             self.HTML_checkbox.configure(state="normal")
-            self.add_images.configure(state="normal")
-            self.images_label.configure(state="normal")
-            self.images_entry.configure(state="normal")
             self.add_attachments.configure(state="normal")
             self.attachments_label.configure(state="normal")
             self.attachments_entry.configure(state="normal")
@@ -223,8 +220,20 @@ class App(customtkinter.CTk):
         self.bcc_entry = customtkinter.CTkEntry(master=self.fourth_line_frame, width=220, state="disabled")
         self.bcc_entry.grid(row=0, column=5, pady=(20,0), padx=0)
 
+        # switch on/off images
+        def switch_images():
+            if self.HTML_checkbox.get() == 0:
+                self.add_images.configure(state="disabled")
+                self.images_label.configure(state="disabled")
+                self.images_entry.configure(state="disabled")
+            else:
+                self.add_images.configure(state="normal")
+                self.images_label.configure(state="normal")
+                self.images_entry.configure(state="normal")
+            
+
         # checkbox HTML
-        self.HTML_checkbox = customtkinter.CTkCheckBox(master=self.fourth_line_frame, text="HTML", state="disabled")
+        self.HTML_checkbox = customtkinter.CTkCheckBox(master=self.fourth_line_frame, text="HTML", state="disabled", command=switch_images)
         self.HTML_checkbox.grid(row=0, column=6, pady=(20, 0), padx=30)
         
 
@@ -343,6 +352,19 @@ class App(customtkinter.CTk):
 
         # https://www.alibabacloud.com/help/en/directmail/latest/how-can-i-send-emails-with-attachments-using-smtp
 
+        # https://github.com/chenjj/espoofer
+        # https://i.blackhat.com/USA-20/Thursday/us-20-Chen-You-Have-No-Idea-Who-Sent-That-Email-18-Attacks-On-Email-Sender-Authentication.pdf
+        # https://www.jianjunchen.com/p/composition-kills.USESEC20.pdf
+        # --> si on doit retenir un seul truc c'est clairement le papier scientifique (dernier lien) avec l'outil espoofer
+
+
+        # Pour SMTP gratuit en ligne :
+        # https://generator.email/inbox3/
+        # https://temporary-phone-number.com/
+        # https://app.sendinblue.com/ --> 300 mails par jour gratuit
+
+
+
 
 
 
@@ -408,9 +430,9 @@ class App(customtkinter.CTk):
         self.second_line_verify_frame.grid_columnconfigure(1, weight=1)  
 
         # image powered by Holehe
-        self.holehe_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "holehe.png")), size=(600, 200))
+        self.holehe_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "holehe.png")), size=(580, 220))
         self.holehe_image_label = customtkinter.CTkLabel(self.second_line_verify_frame, text="", image=self.holehe_image)
-        self.holehe_image_label.grid(row=0, column=1, padx=20, pady=(30,10))
+        self.holehe_image_label.grid(row=0, column=1, padx=20, pady=(30,0))
 
 
         # -------------------------------------------- #
@@ -495,4 +517,3 @@ class App(customtkinter.CTk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-
