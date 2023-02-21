@@ -364,6 +364,11 @@ class App(customtkinter.CTk):
         # https://app.sendinblue.com/ --> 300 mails par jour gratuit
 
 
+        # Autres :
+        # https://www.mail-tester.com/
+        # https://dashboard.unlayer.com/create/suspicious-activity
+        # https://www.iloveimg.com/ 
+
 
 
 
@@ -376,6 +381,28 @@ class App(customtkinter.CTk):
         self.craft_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.craft_frame.grid(row=0, column=0, sticky="nsew")
 
+
+        # -------------------------------------------- #
+
+        # create tabview
+        self.tabview = customtkinter.CTkTabview(self.craft_frame, width=975)
+        self.tabview.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        self.tabview.add("Suspicious Activity")
+        self.tabview.add("Job Proposal")
+        self.tabview.add("Other")
+        # configure grid of individual tabs
+        self.tabview.tab("Suspicious Activity").grid_columnconfigure(0, weight=1)  
+        self.tabview.tab("Job Proposal").grid_columnconfigure(0, weight=1)
+        self.tabview.tab("Other").grid_columnconfigure(0, weight=1)
+
+        self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("Suspicious Activity"), dynamic_resizing=False, values=["Value 1", "Value 2", "Value Long Long Long"])
+        self.optionmenu_1.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("Suspicious Activity"), values=["Value 1", "Value 2", "Value Long....."])
+        self.combobox_1.grid(row=1, column=0, padx=20, pady=(10, 10))
+        self.string_input_button = customtkinter.CTkButton(self.tabview.tab("Suspicious Activity"), text="Open CTkInputDialog")
+        self.string_input_button.grid(row=2, column=0, padx=20, pady=(10, 10))
+        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Job Proposal"), text="CTkLabel on Tab 2")
+        self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
 
 
 
