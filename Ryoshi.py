@@ -8,8 +8,10 @@ from PIL import Image
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
+from email.utils import formatdate
 from tkinter import filedialog
 import subprocess
+import email.utils as utils
 
 
 
@@ -300,14 +302,15 @@ class App(customtkinter.CTk):
         # function "Send Mail"
         def send_mail():
             try: 
-                msg = MIMEMultipart('mixed')
-                sender = self.from_name_entry.get() + "<" + self.from_mail_entry.get() + ">"
+                msg = MIMEMultipart('multipart')
+                sender = self.from_name_entry.get() + " <" + self.from_mail_entry.get() + ">"
                 mailTo = self.to_mail_entry.get()
                 mailCC = self.cc_entry.get()
                 mailBCC = self.bcc_entry.get()
                 subject = self.subject_entry.get()  
                 recipients = mailTo.split(",") + mailCC.split(",") + mailBCC.split(",")
                 formatMail = ''
+                dom = self.from_mail_entry.get().split('@')[1]
                 if self.HTML_checkbox.get() == 0:
                     formatMail = 'plain'
                 else:
@@ -316,7 +319,12 @@ class App(customtkinter.CTk):
                 msg['To'] = mailTo
                 msg['CC'] = mailCC
                 msg['Subject'] = subject
-                text = MIMEText(self.body_mail.get('0.0', 'end'), formatMail)
+                msg['Date'] = formatdate()
+                msg['Message-Id'] = utils.make_msgid(domain=str(dom))
+                msg['Reply-To'] = self.from_mail_entry.get()
+                html = MIMEText(self.body_mail.get('0.0', 'end'), formatMail, 'utf-8')
+                text = MIMEText("text", "plain", 'utf-8')
+                msg.attach(html)
                 msg.attach(text)
                 for a in attachments:
                     msg.attach(a)
