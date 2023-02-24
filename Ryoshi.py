@@ -144,6 +144,7 @@ class App(customtkinter.CTk):
             self.bcc_label.configure(state="normal")
             self.bcc_entry.configure(state="normal")
             self.HTML_checkbox.configure(state="normal")
+            self.reply_to_checkbox.configure(state="normal")
             self.add_attachments.configure(state="normal")
             self.attachments_label.configure(state="normal")
             self.attachments_entry.configure(state="normal")
@@ -220,22 +221,10 @@ class App(customtkinter.CTk):
         self.bcc_label = customtkinter.CTkLabel(master=self.fourth_line_frame, text="BCC:", state="disabled")
         self.bcc_label.grid(row=0, column=4, pady=(20,0), padx=(20,5))
         self.bcc_entry = customtkinter.CTkEntry(master=self.fourth_line_frame, width=220, state="disabled")
-        self.bcc_entry.grid(row=0, column=5, pady=(20,0), padx=0)
-
-        # switch on/off images
-        def switch_images():
-            if self.HTML_checkbox.get() == 0:
-                self.add_images.configure(state="disabled")
-                self.images_label.configure(state="disabled")
-                self.images_entry.configure(state="disabled")
-            else:
-                self.add_images.configure(state="normal")
-                self.images_label.configure(state="normal")
-                self.images_entry.configure(state="normal")
-            
+        self.bcc_entry.grid(row=0, column=5, pady=(20,0), padx=0)    
 
         # checkbox HTML
-        self.HTML_checkbox = customtkinter.CTkCheckBox(master=self.fourth_line_frame, text="HTML", state="disabled", command=switch_images)
+        self.HTML_checkbox = customtkinter.CTkCheckBox(master=self.fourth_line_frame, text="HTML", state="disabled")
         self.HTML_checkbox.grid(row=0, column=6, pady=(20, 0), padx=30)
         
 
@@ -243,20 +232,27 @@ class App(customtkinter.CTk):
 
         # fivth line frame
         self.fivth_line_frame = customtkinter.CTkFrame(self.send_mail_frame, corner_radius=0, fg_color="transparent")
-        self.fivth_line_frame.grid_columnconfigure(8, weight=1)   
+        self.fivth_line_frame.grid_columnconfigure(8, weight=1)  
 
-        # button "Add Images"
-        def add_image():
-            print("Images")
+        # switch on/off reply-to
+        def switch_reply_to():
+            if self.reply_to_checkbox.get() == 0:
+                self.reply_to_label.configure(state="disabled")
+                self.reply_to_entry.delete("0", "end")
+                self.reply_to_entry.configure(state="disabled")
+            else:
+                self.reply_to_label.configure(state="normal")
+                self.reply_to_entry.configure(state="normal")
 
-        self.add_images = customtkinter.CTkButton(master=self.fivth_line_frame, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"), text="Add Image", command=add_image, state="disabled")
-        self.add_images.grid(row=0, column=0, pady=(20,0), padx=(20,0))
+        # checkbox "Change Reply-To"
+        self.reply_to_checkbox = customtkinter.CTkCheckBox(master=self.fivth_line_frame, text="Change Reply-To", state="disabled", command=switch_reply_to)
+        self.reply_to_checkbox.grid(row=0, column=0, pady=(20, 0), padx=20)
 
-        # label + entry disabled "Images"
-        self.images_label = customtkinter.CTkLabel(master=self.fivth_line_frame, text="Images:", state="disabled")
-        self.images_label.grid(row=0, column=1, pady=(20,0), padx=(10,5))
-        self.images_entry = customtkinter.CTkEntry(master=self.fivth_line_frame, width=255, state="disabled")
-        self.images_entry.grid(row=0, column=2, pady=(20,0), padx=0)
+        # label + entry disabled "Reply-To"
+        self.reply_to_label = customtkinter.CTkLabel(master=self.fivth_line_frame, text="Reply-To:", state="disabled")
+        self.reply_to_label.grid(row=0, column=1, pady=(20,0), padx=(10,5))
+        self.reply_to_entry = customtkinter.CTkEntry(master=self.fivth_line_frame, width=220, state="disabled")
+        self.reply_to_entry.grid(row=0, column=2, pady=(20,0), padx=0)
 
         # button "Add Attachment"
         attachments = []
@@ -278,7 +274,7 @@ class App(customtkinter.CTk):
         # label + entry disabled "Attachments"
         self.attachments_label = customtkinter.CTkLabel(master=self.fivth_line_frame, text="Attachments:", state="disabled")
         self.attachments_label.grid(row=0, column=4, pady=(20,0), padx=(10,5))
-        self.attachments_entry = customtkinter.CTkEntry(master=self.fivth_line_frame, width=255, state="disabled")
+        self.attachments_entry = customtkinter.CTkEntry(master=self.fivth_line_frame, width=270, state="disabled")
         self.attachments_entry.grid(row=0, column=5, pady=(20,0), padx=0)
 
         
@@ -315,13 +311,16 @@ class App(customtkinter.CTk):
                     formatMail = 'plain'
                 else:
                     formatMail = 'html'
+                reply_to = self.from_mail_entry.get()
+                if self.reply_to_checkbox.get() == 1:
+                    reply_to = self.reply_to_entry.get()
                 msg['From'] = sender
                 msg['To'] = mailTo
                 msg['CC'] = mailCC
                 msg['Subject'] = subject
                 msg['Date'] = formatdate()
                 msg['Message-Id'] = utils.make_msgid(domain=str(dom))
-                msg['Reply-To'] = self.from_mail_entry.get()
+                msg['Reply-To'] = reply_to
                 html = MIMEText(self.body_mail.get('0.0', 'end'), formatMail, 'utf-8')
                 text = MIMEText("text", "plain", 'utf-8')
                 msg.attach(html)
@@ -389,28 +388,112 @@ class App(customtkinter.CTk):
         self.craft_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.craft_frame.grid(row=0, column=0, sticky="nsew")
 
+        # create first craft frame
+        self.first_craft_frame = customtkinter.CTkFrame(self.craft_frame, corner_radius=0, fg_color="transparent")
+        self.first_craft_frame.grid(row=0, column=0, sticky="nsew")
+
+        # create second craft frame
+        self.second_craft_frame = customtkinter.CTkFrame(self.craft_frame, corner_radius=0, fg_color="transparent")
+        self.second_craft_frame.grid(row=0, column=1, sticky="nsew")
+
 
         # -------------------------------------------- #
 
         # create tabview
-        self.tabview = customtkinter.CTkTabview(self.craft_frame, width=975)
+        self.tabview = customtkinter.CTkTabview(self.first_craft_frame, width=450)
         self.tabview.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
         self.tabview.add("Suspicious Activity")
         self.tabview.add("Job Proposal")
         self.tabview.add("Other")
-        # configure grid of individual tabs
-        self.tabview.tab("Suspicious Activity").grid_columnconfigure(0, weight=1)  
-        self.tabview.tab("Job Proposal").grid_columnconfigure(0, weight=1)
-        self.tabview.tab("Other").grid_columnconfigure(0, weight=1)
 
-        self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("Suspicious Activity"), dynamic_resizing=False, values=["Value 1", "Value 2", "Value Long Long Long"])
-        self.optionmenu_1.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("Suspicious Activity"), values=["Value 1", "Value 2", "Value Long....."])
-        self.combobox_1.grid(row=1, column=0, padx=20, pady=(10, 10))
-        self.string_input_button = customtkinter.CTkButton(self.tabview.tab("Suspicious Activity"), text="Open CTkInputDialog")
-        self.string_input_button.grid(row=2, column=0, padx=20, pady=(10, 10))
+        # Label + combobox social networks
+        self.social_network_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Social Network:", justify=customtkinter.LEFT)
+        self.social_network_label.grid(row=0, column=0, pady=(20,0), padx=0)
+        self.social_network_choice = customtkinter.CTkComboBox(self.tabview.tab("Suspicious Activity"), values=["Facebook", "Instagram", "Lorem Ipsum..."], state="readonly")
+        self.social_network_choice.grid(row=0, column=1, pady=(20, 0), padx=0)
+
+        # Switch state URL profile image
+        def switch_URL_profile_image():
+            if self.profile_image_checkbox.get() == 0:
+                self.url_profile_entry.delete("0", "end")
+                self.url_profile_entry.configure(state="disabled")
+            else:
+                self.url_profile_entry.configure(state="normal")
+
+        # label + entry disabled "URL Profile Image"
+        self.profile_image_checkbox = customtkinter.CTkCheckBox(self.tabview.tab("Suspicious Activity"), text="URL Profile Image:", command=switch_URL_profile_image)
+        self.profile_image_checkbox.grid(row=1, column=0, pady=(50, 0), padx=(20,0))
+        self.url_profile_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255, state="disabled", justify=customtkinter.LEFT)
+        self.url_profile_entry.grid(row=1, column=1, pady=(50,0), padx=(10,40))
+
+        # label + entry "Name"
+        self.name_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Name:")
+        self.name_label.grid(row=2, column=0, pady=(30,0), padx=0)
+        self.name_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
+        self.name_entry.grid(row=2, column=1, pady=(30,0), padx=(10,40))
+
+        # label + entry "Title"
+        self.title_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Title:")
+        self.title_label.grid(row=3, column=0, pady=(30,0), padx=0)
+        self.title_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
+        self.title_entry.grid(row=3, column=1, pady=(30,0), padx=(10,40))
+
+        # label + entry "URL Link"
+        self.URL_link_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="URL Link:")
+        self.URL_link_label.grid(row=4, column=0, pady=(30,20), padx=0)
+        self.URL_link_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
+        self.URL_link_entry.grid(row=4, column=1, pady=(30,20), padx=(10,40))
+
+
+        # Function generate suspicious mail
+        def gen_sus_mail(choice, profile_image, name, title, link):
+            if choice == "Facebook":
+                file = open("./crafted_mails/facebook.html", "r")
+            if choice == "Instagram":
+                file = open("./crafted_mails/instagram.html", "r")
+            text = file.read()
+            if profile_image != "":
+                text = text.replace("RyoshiProfile", profile_image)
+            text = text.replace("RyoshiName", name)
+            text = text.replace("RyoshiTitle", title)
+            text = text.replace("RyoshiLink", link)
+            self.mail_crafted_textbox.delete("0.0", "end")
+            self.mail_crafted_textbox.insert("0.0", text)
+            file.close()
+
+        # Generate mail
+        def generate_mail():
+            if self.tabview.get() == "Suspicious Activity":
+                choice = self.social_network_choice.get()
+                if choice != "":
+                    profile_image = ""
+                    if self.profile_image_checkbox.get() == 1:
+                        profile_image = self.url_profile_entry.get()
+                    name = self.name_entry.get()
+                    title = self.title_entry.get()
+                    link = self.URL_link_entry.get()
+                    gen_sus_mail(choice, profile_image, name, title, link)
+                else:
+                    self.mail_crafted_textbox.delete("0.0", "end")
+                    self.mail_crafted_textbox.insert("0.0", "Please choose a social network") 
+            elif self.tabview.get() == "Job Proposal":
+                print("job")
+            elif self.tabview.get() == "Other":
+                print("other")
+            
+
+
+        # Generate mail button
+        self.generate_mail_button = customtkinter.CTkButton(self.first_craft_frame, border_width=1, text="Generate Mail", command=generate_mail, width=250, height=45)
+        self.generate_mail_button.grid(row=2, column=0, pady=20, padx=20)
+
+        # Text Box Mail Crafted
+        self.mail_crafted_textbox = customtkinter.CTkTextbox(self.second_craft_frame, width=450, height=720)
+        self.mail_crafted_textbox.grid(row=0, column=0, pady=20, padx=10)
+
+
         self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Job Proposal"), text="CTkLabel on Tab 2")
-        self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
+        self.label_tab_2.grid(row=0, column=0, padx=(20,10), pady=20)
 
 
 
@@ -510,6 +593,8 @@ class App(customtkinter.CTk):
             self.send_mail_frame.grid_forget()
         if name == "craft_mail":
             self.craft_frame.grid(row=0, column=1, sticky="nsew")
+            self.first_craft_frame.grid(row=0, column=1, sticky="nsew")
+            self.second_craft_frame.grid(row=0, column=2, sticky="nsew")
         else:
             self.craft_frame.grid_forget()
         if name == "verify_mail":
