@@ -349,39 +349,6 @@ class App(customtkinter.CTk):
         self.logs_textbox.grid(row=0, column=2, pady=0, padx=0)
 
 
-
-        # https://www.youtube.com/watch?v=xB6u9zeRMpY
-        # https://github.com/TomSchimansky/CustomTkinter/wiki/
-
-        # https://support.google.com/mail/answer/1311182?hl=fr#null
-        # https://support.google.com/mail/answer/81126
-        # https://support.google.com/mail/answer/81126#auth-reqs
-
-        # https://www.alibabacloud.com/help/en/directmail/latest/how-can-i-send-emails-with-attachments-using-smtp
-
-        # https://github.com/chenjj/espoofer
-        # https://i.blackhat.com/USA-20/Thursday/us-20-Chen-You-Have-No-Idea-Who-Sent-That-Email-18-Attacks-On-Email-Sender-Authentication.pdf
-        # https://www.jianjunchen.com/p/composition-kills.USESEC20.pdf
-        # --> si on doit retenir un seul truc c'est clairement le papier scientifique (dernier lien) avec l'outil espoofer
-
-
-        # Pour SMTP gratuit en ligne :
-        # https://generator.email/inbox3/
-        # https://temporary-phone-number.com/
-        # https://app.sendinblue.com/ --> 300 mails par jour gratuit
-
-
-        # Autres :
-        # https://www.mail-tester.com/
-        # https://dashboard.unlayer.com/create/suspicious-activity
-        # https://www.iloveimg.com/ 
-
-
-
-
-
-
-
         # -------------------------------------------- #
 
         # create craft frame
