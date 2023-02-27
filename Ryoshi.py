@@ -379,51 +379,81 @@ class App(customtkinter.CTk):
         self.social_network_choice = customtkinter.CTkComboBox(self.tabview.tab("Suspicious Activity"), values=["Facebook", "Instagram", "Lorem Ipsum..."], state="readonly")
         self.social_network_choice.grid(row=0, column=1, pady=(20, 0), padx=0)
 
-        # Switch state URL profile image
-        def switch_URL_profile_image():
-            if self.profile_image_checkbox.get() == 0:
+        # label + entry "Mail Title"
+        self.title_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Mail Title:")
+        self.title_label.grid(row=1, column=0, pady=(50,0), padx=0)
+        self.title_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
+        self.title_entry.grid(row=1, column=1, pady=(50,0), padx=(10,40))
+
+        # label + entry "Victim's Name"
+        self.name_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Victim's Name:")
+        self.name_label.grid(row=2, column=0, pady=(20,0), padx=0)
+        self.name_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
+        self.name_entry.grid(row=2, column=1, pady=(20,0), padx=(10,40))
+
+        # label + entry "Phishing Link"
+        self.URL_link_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Phishing Link:")
+        self.URL_link_label.grid(row=3, column=0, pady=(20,0), padx=0)
+        self.URL_link_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
+        self.URL_link_entry.grid(row=3, column=1, pady=(20,0), padx=(10,40))
+
+        # Switch state for mail with images
+        def switch_images():
+            if self.images_checkbox.get() == 0:
+                self.profile_image_label.configure(state="disabled")
                 self.url_profile_entry.delete("0", "end")
                 self.url_profile_entry.configure(state="disabled")
             else:
+                self.profile_image_label.configure(state="normal")
                 self.url_profile_entry.configure(state="normal")
 
+        # Checkbox + label "Use Images ?"
+        self.images_checkbox = customtkinter.CTkCheckBox(self.tabview.tab("Suspicious Activity"), text="Use Images ?", command=switch_images)
+        self.images_checkbox.grid(row=4, column=0, pady=(30, 0), padx=(20,0))
+        self.images_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="--> increase risk to be mark as spam")
+        self.images_label.grid(row=4, column=1, pady=(30,0), padx=0)
+
         # label + entry disabled "URL Profile Image"
-        self.profile_image_checkbox = customtkinter.CTkCheckBox(self.tabview.tab("Suspicious Activity"), text="URL Profile Image:", command=switch_URL_profile_image)
-        self.profile_image_checkbox.grid(row=1, column=0, pady=(50, 0), padx=(20,0))
+        self.profile_image_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="URL Profile Image:", state="disabled")
+        self.profile_image_label.grid(row=5, column=0, pady=(20, 20), padx=(20,0))
         self.url_profile_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255, state="disabled", justify=customtkinter.LEFT)
-        self.url_profile_entry.grid(row=1, column=1, pady=(50,0), padx=(10,40))
+        self.url_profile_entry.grid(row=5, column=1, pady=(20, 20), padx=(10,40))
 
-        # label + entry "Name"
-        self.name_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Name:")
-        self.name_label.grid(row=2, column=0, pady=(30,0), padx=0)
-        self.name_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
-        self.name_entry.grid(row=2, column=1, pady=(30,0), padx=(10,40))
 
-        # label + entry "Title"
-        self.title_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Title:")
-        self.title_label.grid(row=3, column=0, pady=(30,0), padx=0)
-        self.title_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
-        self.title_entry.grid(row=3, column=1, pady=(30,0), padx=(10,40))
-
-        # label + entry "URL Link"
-        self.URL_link_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="URL Link:")
-        self.URL_link_label.grid(row=4, column=0, pady=(30,20), padx=0)
-        self.URL_link_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
-        self.URL_link_entry.grid(row=4, column=1, pady=(30,20), padx=(10,40))
+        # Function generate random infos
+        def gen_random_infos(text):
+            import random
+            os = random.choice(["Windows 10", "Windows 11", "MacOS", "iOS", "Android", "Linux"])
+            browser = random.choice(["Google Chrome", "Safari", "Microsoft Edge", "Mozilla Firefox", "Opera", "Brave"])
+            location = random.choice(["Nairobi, Kenya, KEN", "Lagos, Nigeria, NIG", "Acra, Ghana, GHA", "Cairo, Egypt, EGY", "Douala, Cameroun, CAM", "Abidjan, Ivory Coast, IVO", "Rabat, Morocco, MOR", "Dakar, Senegal, SEN", "Tunis, Tunisia, TUN", "Alger, Algeria, ALG", "Marrakech, Morocco, MOR", "Rio de Janeiro, Brasilia, BRA", "Buenos Aires, Argentina, ARG", "Santiago, Chile, CHI", "Bogota, Colombia, COL", "Shangai, China, CHI", "Beijing, China, CHI", "Chengdu, China, CHI", "Shenzen, China, CHI", "Wuhan, China, CHI", "Qingdao, China, CHI", "Pyongyang, North Korea, KOR", "Moscow, Russia, RUS", "Saint-Petersburg, Russia, RUS", "Kazan, Russia, RUS", "Novossibirsk, Russia, RUS", "Vladivostok, Russia, RUS"])
+            ip = ".".join(str(random.randint(0, 255)) for _ in range(4))
+            text = text.replace("RyoshiOS", os)
+            text = text.replace("RyoshiBrowser", browser)
+            text = text.replace("RyoshiIP", ip)
+            text = text.replace("RyoshiLocation", location)
+            return text          
 
 
         # Function generate suspicious mail
-        def gen_sus_mail(choice, profile_image, name, title, link):
+        def gen_sus_mail(choice, title, name, link, images, profile_image):
             if choice == "Facebook":
-                file = open("./crafted_mails/facebook.html", "r")
+                if images == True:
+                    file = open("./crafted_mails/Suspicious Activity/FacebookWithImages.html", "r")
+                else:
+                    file = open("./crafted_mails/Suspicious Activity/FacebookWithoutImages.html", "r")
             if choice == "Instagram":
-                file = open("./crafted_mails/instagram.html", "r")
+                if images == True:
+                    file = open("./crafted_mails/Suspicious Activity/InstagramWithImages.html", "r")
+                else:
+                    file = open("./crafted_mails/Suspicious Activity/InstagramWithoutImages.html", "r")
             text = file.read()
-            if profile_image != "":
-                text = text.replace("RyoshiProfile", profile_image)
-            text = text.replace("RyoshiName", name)
             text = text.replace("RyoshiTitle", title)
+            text = text.replace("RyoshiName", name)
             text = text.replace("RyoshiLink", link)
+            text = text.replace("Â", "")
+            if profile_image != "":
+                text = text.replace("https://i.imgur.com/Uc5s2Pz.png", profile_image)
+            text = gen_random_infos(text)
             self.mail_crafted_textbox.delete("0.0", "end")
             self.mail_crafted_textbox.insert("0.0", text)
             file.close()
@@ -433,13 +463,19 @@ class App(customtkinter.CTk):
             if self.tabview.get() == "Suspicious Activity":
                 choice = self.social_network_choice.get()
                 if choice != "":
+                    images = False
                     profile_image = ""
-                    if self.profile_image_checkbox.get() == 1:
+                    if self.images_checkbox.get() == 1:
+                        images = True
                         profile_image = self.url_profile_entry.get()
                     name = self.name_entry.get()
                     title = self.title_entry.get()
                     link = self.URL_link_entry.get()
-                    gen_sus_mail(choice, profile_image, name, title, link)
+                    if name == "" or title == "" or link == "":
+                        self.mail_crafted_textbox.delete("0.0", "end")
+                        self.mail_crafted_textbox.insert("0.0", "Please enter informations") 
+                    else:
+                        gen_sus_mail(choice, title, name, link, images, profile_image)
                 else:
                     self.mail_crafted_textbox.delete("0.0", "end")
                     self.mail_crafted_textbox.insert("0.0", "Please choose a social network") 
@@ -448,6 +484,17 @@ class App(customtkinter.CTk):
             elif self.tabview.get() == "Other":
                 print("other")
             
+
+        # Label tabview 2
+        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Job Proposal"), text="CTkLabel on Tab 2")
+        self.label_tab_2.grid(row=0, column=0, padx=(20,10), pady=20)
+
+        # Label tabview 3
+        self.label_tab_31 = customtkinter.CTkLabel(self.tabview.tab("Other"), text="Ask us for more template or create yours")
+        self.label_tab_31.grid(row=0, column=0, padx=20, pady=(20,0))
+        self.label_tab_32 = customtkinter.CTkLabel(self.tabview.tab("Other"), text="You can create your own template from : https://unlayer.com/templates")
+        self.label_tab_32.grid(row=1, column=0, padx=20, pady=(20,0))
+
 
 
         # Generate mail button
@@ -458,9 +505,7 @@ class App(customtkinter.CTk):
         self.mail_crafted_textbox = customtkinter.CTkTextbox(self.second_craft_frame, width=450, height=720)
         self.mail_crafted_textbox.grid(row=0, column=0, pady=20, padx=10)
 
-
-        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Job Proposal"), text="CTkLabel on Tab 2")
-        self.label_tab_2.grid(row=0, column=0, padx=(20,10), pady=20)
+        
 
 
 

@@ -11,7 +11,7 @@
 
 ** What can increase your mail to be mark as spam **
 
-- Famous name like Facebook, Instagram, WhatsApp..
+- Use famous name as sender like "Facebook", "Instagram", "WhatsApp"..
 - Words that can be triggered by anti spam filters (see Wordlist Spam file)
 - Different mail between the "From mail" and the "Reply-To" header
 - Images in HTML mail (some mail agents like Outlook will not displayed your images by default, other will mark them as spam, unfortunatly there is no way to be sure that your images will be displayed. Two things to remember : the less images you use, the better your spam score will be, and if you absolutlty want to use images they have to be hosted on public servers like imgur.com)
@@ -24,7 +24,8 @@
 - Temp phone number : https://temporary-phone-number.com/
 - Profile picture generator : https://this-person-does-not-exist.com/en
 - Free Online SMTP : https://app.sendinblue.com/
-- Craft your own html mail templates : https://unlayer.com/templates
+- Craft your own html mail template : https://unlayer.com/templates
+- Other phishing templates : https://caniphish.com/free-phishing-test/phishing-email-templates
 - Test your mail : https://www.mail-tester.com/
 - Wiki of CustomTKinter (used for the GUI) : https://github.com/TomSchimansky/CustomTkinter/wiki/
 
@@ -36,7 +37,3 @@
 - Research paper : https://www.jianjunchen.com/p/composition-kills.USESEC20.pdf
 - Tool : https://github.com/chenjj/espoofer
 --> this tool is the best one I've seen, Ryoshi is based on the client_a3 attack
-
-
-
-https://caniphish.com/free-phishing-test/phishing-email-templates#signupForm
