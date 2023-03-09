@@ -376,7 +376,7 @@ class App(customtkinter.CTk):
         # Label + combobox social networks
         self.social_network_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Social Network:", justify=customtkinter.LEFT)
         self.social_network_label.grid(row=0, column=0, pady=(20,0), padx=0)
-        self.social_network_choice = customtkinter.CTkComboBox(self.tabview.tab("Suspicious Activity"), values=["Facebook", "Instagram", "Lorem Ipsum..."], state="readonly")
+        self.social_network_choice = customtkinter.CTkComboBox(self.tabview.tab("Suspicious Activity"), values=["Discord", "Facebook", "Gmail", "Instagram", "LinkedIn", "Pinterest", "SnapChat", "TikTok", "Twitter", "Youtube"], state="readonly")
         self.social_network_choice.grid(row=0, column=1, pady=(20, 0), padx=0)
 
         # label + entry "Mail Title"
@@ -413,8 +413,8 @@ class App(customtkinter.CTk):
         self.images_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="--> increase risk to be mark as spam")
         self.images_label.grid(row=4, column=1, pady=(30,0), padx=0)
 
-        # label + entry disabled "URL Profile Image"
-        self.profile_image_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="URL Profile Image:", state="disabled")
+        # label + entry disabled "URL Victim's Image"
+        self.profile_image_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="URL Victim's Image:", state="disabled")
         self.profile_image_label.grid(row=5, column=0, pady=(20, 20), padx=(20,0))
         self.url_profile_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255, state="disabled", justify=customtkinter.LEFT)
         self.url_profile_entry.grid(row=5, column=1, pady=(20, 20), padx=(10,40))
@@ -436,16 +436,10 @@ class App(customtkinter.CTk):
 
         # Function generate suspicious mail
         def gen_sus_mail(choice, title, name, link, images, profile_image):
-            if choice == "Facebook":
-                if images == True:
-                    file = open("./crafted_mails/Suspicious Activity/FacebookWithImages.html", "r")
-                else:
-                    file = open("./crafted_mails/Suspicious Activity/FacebookWithoutImages.html", "r")
-            if choice == "Instagram":
-                if images == True:
-                    file = open("./crafted_mails/Suspicious Activity/InstagramWithImages.html", "r")
-                else:
-                    file = open("./crafted_mails/Suspicious Activity/InstagramWithoutImages.html", "r")
+            if images == True:
+                file = open("./crafted_mails/Suspicious Activity/"+choice+"WithImages.html", "r")
+            else:
+                file = open("./crafted_mails/Suspicious Activity/"+choice+"WithoutImages.html", "r")
             text = file.read()
             text = text.replace("RyoshiTitle", title)
             text = text.replace("RyoshiName", name)
@@ -490,9 +484,9 @@ class App(customtkinter.CTk):
         self.label_tab_2.grid(row=0, column=0, padx=(20,10), pady=20)
 
         # Label tabview 3
-        self.label_tab_31 = customtkinter.CTkLabel(self.tabview.tab("Other"), text="Ask us for more template or create yours")
+        self.label_tab_31 = customtkinter.CTkLabel(self.tabview.tab("Other"), text="Ask me for more templates or submit yours")
         self.label_tab_31.grid(row=0, column=0, padx=20, pady=(20,0))
-        self.label_tab_32 = customtkinter.CTkLabel(self.tabview.tab("Other"), text="You can create your own template from : https://unlayer.com/templates")
+        self.label_tab_32 = customtkinter.CTkLabel(self.tabview.tab("Other"), text="You can also create your own template here : https://unlayer.com/templates")
         self.label_tab_32.grid(row=1, column=0, padx=20, pady=(20,0))
 
 
