@@ -298,7 +298,7 @@ class App(customtkinter.CTk):
         # function "Send Mail"
         def send_mail():
             try: 
-                msg = MIMEMultipart('multipart')
+                msg = MIMEMultipart('mixed')
                 sender = self.from_name_entry.get() + " <" + self.from_mail_entry.get() + ">"
                 mailTo = self.to_mail_entry.get()
                 mailCC = self.cc_entry.get()
@@ -322,9 +322,9 @@ class App(customtkinter.CTk):
                 msg['Message-Id'] = utils.make_msgid(domain=str(dom))
                 msg['Reply-To'] = reply_to
                 html = MIMEText(self.body_mail.get('0.0', 'end'), formatMail, 'utf-8')
-                text = MIMEText("text", "plain", 'utf-8')
+                # text = MIMEText("text", "plain", 'utf-8')
                 msg.attach(html)
-                msg.attach(text)
+                # msg.attach(text)
                 for a in attachments:
                     msg.attach(a)
                 print(msg)
@@ -370,20 +370,20 @@ class App(customtkinter.CTk):
         self.tabview = customtkinter.CTkTabview(self.first_craft_frame, width=450)
         self.tabview.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
         self.tabview.add("Suspicious Activity")
-        self.tabview.add("Job Proposal")
+        self.tabview.add("Job Offer")
         self.tabview.add("Other")
 
         # Label + combobox social networks
         self.social_network_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Social Network:", justify=customtkinter.LEFT)
-        self.social_network_label.grid(row=0, column=0, pady=(20,0), padx=0)
+        self.social_network_label.grid(row=0, column=0, pady=(30,0), padx=0)
         self.social_network_choice = customtkinter.CTkComboBox(self.tabview.tab("Suspicious Activity"), values=["Discord", "Facebook", "Gmail", "Instagram", "LinkedIn", "Pinterest", "SnapChat", "TikTok", "Twitter", "Youtube"], state="readonly")
         self.social_network_choice.grid(row=0, column=1, pady=(20, 0), padx=0)
 
         # label + entry "Mail Title"
         self.title_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Mail Title:")
-        self.title_label.grid(row=1, column=0, pady=(50,0), padx=0)
+        self.title_label.grid(row=1, column=0, pady=(30,0), padx=0)
         self.title_entry = customtkinter.CTkEntry(self.tabview.tab("Suspicious Activity"), width=255)
-        self.title_entry.grid(row=1, column=1, pady=(50,0), padx=(10,40))
+        self.title_entry.grid(row=1, column=1, pady=(30,0), padx=(10,40))
 
         # label + entry "Victim's Name"
         self.name_label = customtkinter.CTkLabel(self.tabview.tab("Suspicious Activity"), text="Victim's Name:")
@@ -473,15 +473,95 @@ class App(customtkinter.CTk):
                 else:
                     self.mail_crafted_textbox.delete("0.0", "end")
                     self.mail_crafted_textbox.insert("0.0", "Please choose a social network") 
-            elif self.tabview.get() == "Job Proposal":
-                print("job")
+            elif self.tabview.get() == "Job Offer":
+                if self.company_name_entry.get() == "" or self.victim2_name_entry.get() == "" or self.job_name_entry.get() == "" or self.HR_name_entry.get() == "" or self.company_site_entry.get() == "" or self.company_location_entry.get() == "" :
+                        self.mail_crafted_textbox.delete("0.0", "end")
+                        self.mail_crafted_textbox.insert("0.0", "Please enter informations") 
+                else :
+                    if self.images2_checkbox.get() == 1:
+                        file = open("./crafted_mails/Job Offer/JobOfferWithImages.html", "r")
+                    else:
+                        file = open("./crafted_mails/Job Offer/JobOfferWithoutImages.html", "r")
+                    text = file.read()
+                    text = text.replace("RyoshiCompany", self.company_name_entry.get())
+                    text = text.replace("RyoshiVictimName", self.victim2_name_entry.get())
+                    text = text.replace("RyoshiJob", self.job_name_entry.get())
+                    text = text.replace("RyoshiHrName", self.HR_name_entry.get())
+                    text = text.replace("RyoshiSite", self.company_site_entry.get())
+                    text = text.replace("RyoshiLocation", self.company_location_entry.get())
+                    text = text.replace("Â", "")
+                    if self.company_image_entry.get() != "":
+                        text = text.replace("RyoshiLogo", self.company_image_entry.get())
+                    self.mail_crafted_textbox.delete("0.0", "end")
+                    self.mail_crafted_textbox.insert("0.0", text)
+                    file.close()
             elif self.tabview.get() == "Other":
-                print("other")
+                self.mail_crafted_textbox.delete("0.0", "end")
+                self.mail_crafted_textbox.insert("0.0", "Select another tabview to generate a template") 
             
 
-        # Label tabview 2
-        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Job Proposal"), text="CTkLabel on Tab 2")
-        self.label_tab_2.grid(row=0, column=0, padx=(20,10), pady=20)
+        # ------------------- #
+
+        # label + entry "Victim's Name"
+        self.victim2_name_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="Victim's Name:")
+        self.victim2_name_label.grid(row=0, column=0, pady=(30,0), padx=0)
+        self.victim2_name_entry = customtkinter.CTkEntry(self.tabview.tab("Job Offer"), width=255)
+        self.victim2_name_entry.grid(row=0, column=1, pady=(20,0), padx=(10,40))
+
+        # label + entry "Job Name Proposition"
+        self.job_name_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="Job Name Proposition:")
+        self.job_name_label.grid(row=1, column=0, pady=(20,0), padx=0)
+        self.job_name_entry = customtkinter.CTkEntry(self.tabview.tab("Job Offer"), width=255)
+        self.job_name_entry.grid(row=1, column=1, pady=(20,0), padx=(10,40))
+
+        # label + entry "Company Name"
+        self.company_name_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="Company Name:")
+        self.company_name_label.grid(row=2, column=0, pady=(20,0), padx=0)
+        self.company_name_entry = customtkinter.CTkEntry(self.tabview.tab("Job Offer"), width=255)
+        self.company_name_entry.grid(row=2, column=1, pady=(20,0), padx=(10,40))
+
+        # label + entry "Company Location"
+        self.company_location_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="Company Location:")
+        self.company_location_label.grid(row=3, column=0, pady=(20,0), padx=0)
+        self.company_location_entry = customtkinter.CTkEntry(self.tabview.tab("Job Offer"), width=255)
+        self.company_location_entry.grid(row=3, column=1, pady=(20,0), padx=(10,40))
+
+        # label + entry "Company Website"
+        self.company_site_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="Company Website:")
+        self.company_site_label.grid(row=4, column=0, pady=(20,0), padx=0)
+        self.company_site_entry = customtkinter.CTkEntry(self.tabview.tab("Job Offer"), width=255)
+        self.company_site_entry.grid(row=4, column=1, pady=(20,0), padx=(10,40))
+
+        # label + entry "HR Name"
+        self.HR_name_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="HR Name:")
+        self.HR_name_label.grid(row=5, column=0, pady=(20,0), padx=0)
+        self.HR_name_entry = customtkinter.CTkEntry(self.tabview.tab("Job Offer"), width=255)
+        self.HR_name_entry.grid(row=5, column=1, pady=(20,0), padx=(10,40))  
+
+        # Switch state for mail with images
+        def switch_images2():
+            if self.images2_checkbox.get() == 0:
+                self.company_image_label.configure(state="disabled")
+                self.company_image_entry.delete("0", "end")
+                self.company_image_entry.configure(state="disabled")
+            else:
+                self.company_image_label.configure(state="normal")
+                self.company_image_entry.configure(state="normal")
+
+        # Checkbox + label "Use Images ?"
+        self.images2_checkbox = customtkinter.CTkCheckBox(self.tabview.tab("Job Offer"), text="Use Images ?", command=switch_images2)
+        self.images2_checkbox.grid(row=6, column=0, pady=(30, 0), padx=(20,0))
+        self.images2_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="--> increase risk to be mark as spam")
+        self.images2_label.grid(row=6, column=1, pady=(30,0), padx=0)
+
+        # label + entry disabled "URL Company's Image"
+        self.company_image_label = customtkinter.CTkLabel(self.tabview.tab("Job Offer"), text="URL Company's Image:", state="disabled")
+        self.company_image_label.grid(row=7, column=0, pady=(20, 20), padx=(20,0))
+        self.company_image_entry = customtkinter.CTkEntry(self.tabview.tab("Job Offer"), width=255, state="disabled", justify=customtkinter.LEFT)
+        self.company_image_entry.grid(row=7, column=1, pady=(20, 20), padx=(10,40))
+
+
+        # ------------------- #
 
         # Label tabview 3
         self.label_tab_31 = customtkinter.CTkLabel(self.tabview.tab("Other"), text="Ask me for more templates or submit yours")
@@ -554,7 +634,7 @@ class App(customtkinter.CTk):
         self.second_line_verify_frame.grid_columnconfigure(1, weight=1)  
 
         # image powered by Holehe
-        self.holehe_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "holehe.png")), size=(580, 220))
+        self.holehe_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "holehe.png")), size=(560, 240))
         self.holehe_image_label = customtkinter.CTkLabel(self.second_line_verify_frame, text="", image=self.holehe_image)
         self.holehe_image_label.grid(row=0, column=1, padx=20, pady=(30,0))
 

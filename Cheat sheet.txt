@@ -1,9 +1,9 @@
 ** What can block your mail to be sent **
 
 - Uncompatible html tags (exemple:, if you think that you can use svg tag to replace img your mail will be block, gmail block external webfonts, Outlook doesn't display images by default...)
-- Known virus as link or attachment, anti spam filters can recognize the signature of well known viruses, if you use one, your mail will be block
+- Known virus as link or attachment, anti spam filters can recognize the signature of well known viruses, if you use one, your mail will be block and your smtp server will be mark as spam
 --> you can analyze a file or a link here : https://www.virustotal.com/
-- Domain which are protected by SPF / DKIM / DMARC (exemple: you want to send a mail with the adress "@facebook.com", this domain is protected and doesn't allow all IPs to send mails with his name so if you try your mail will be block and never displayed, even in the spam folder)
+- Domain which are protected by SPF / DKIM / DMARC (exemple: you want to send a mail with the address "@facebook.com", this domain is protected and doesn't allow all IPs to send mails with his name so if you try your mail will be block and never displayed, even in the spam folder)
 --> learn more about SPF / DKIM / DMARC here : https://dmarcian.com/why-dmarc/
 --> very useful tool : https://mxtoolbox.com/
 
@@ -12,7 +12,7 @@
 ** What can increase your mail to be mark as spam **
 
 - Use famous name as sender like "Facebook", "Instagram", "WhatsApp"..
-- Words that can be triggered by anti spam filters (see Wordlist Spam file)
+- Words that can be triggered by anti spam filters (see "Wordlist Spam.xlsx" file)
 - Different mail between the "From mail" and the "Reply-To" header
 - Images in HTML mail (some mail agents like Outlook will not displayed your images by default, other will mark them as spam, unfortunatly there is no way to be sure that your images will be displayed. Two things to remember : the less images you use, the better your spam score will be, and if you absolutlty want to use images they have to be hosted on public servers like imgur.com)
 
@@ -28,6 +28,7 @@
 - Other phishing templates : https://caniphish.com/free-phishing-test/phishing-email-templates
 - Test your mail : https://www.mail-tester.com/
 - Wiki of CustomTKinter (used for the GUI) : https://github.com/TomSchimansky/CustomTkinter/wiki/
+- Another Phishing Tools : https://getgophish.com/ 
 
 ------------------------
 
@@ -35,5 +36,5 @@
 
 - Conference about mail security : https://i.blackhat.com/USA-20/Thursday/us-20-Chen-You-Have-No-Idea-Who-Sent-That-Email-18-Attacks-On-Email-Sender-Authentication.pdf
 - Research paper : https://www.jianjunchen.com/p/composition-kills.USESEC20.pdf
-- Tool : https://github.com/chenjj/espoofer
+- Tools : https://github.com/chenjj/espoofer
 --> this tool is the best one I've seen, Ryoshi is based on the client_a3 attack
