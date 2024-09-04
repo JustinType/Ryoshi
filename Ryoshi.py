@@ -304,13 +304,13 @@ class App(customtkinter.CTk):
                 mailCC = self.cc_entry.get()
                 mailBCC = self.bcc_entry.get()
                 subject = self.subject_entry.get()  
-                recipients = mailTo.split(",") + mailCC.split(",") + mailBCC.split(",")
-                formatMail = ''
+                recipients = []
+                recipients = mailTo.split(",")
+                if mailCC != '':
+                    recipients += mailCC.split(",")
+                if mailBCC != '':
+                    recipients += mailBCC.split(",")
                 dom = self.from_mail_entry.get().split('@')[1]
-                if self.HTML_checkbox.get() == 0:
-                    formatMail = 'plain'
-                else:
-                    formatMail = 'html'
                 reply_to = self.from_mail_entry.get()
                 if self.reply_to_checkbox.get() == 1:
                     reply_to = self.reply_to_entry.get()
@@ -321,18 +321,21 @@ class App(customtkinter.CTk):
                 msg['Date'] = formatdate()
                 msg['Message-Id'] = utils.make_msgid(domain=str(dom))
                 msg['Reply-To'] = reply_to
-                html = MIMEText(self.body_mail.get('0.0', 'end'), formatMail, 'utf-8')
-                # text = MIMEText("text", "plain", 'utf-8')
-                msg.attach(html)
-                # msg.attach(text)
+                if self.HTML_checkbox.get() == 0:
+                    text = MIMEText(self.body_mail.get('0.0', 'end'), "plain", 'utf-8')       
+                    msg.attach(text)
+                else:
+                    html = MIMEText(self.body_mail.get('0.0', 'end'), 'html', 'utf-8')
+                    msg.attach(html)
                 for a in attachments:
                     msg.attach(a)
-                print(msg)
                 ssl_context = ssl.create_default_context()
+                
+                print(msg)
                 s = smtplib.SMTP(self.entry_smtp_server.get(), self.entry_port_smtp_server.get())
                 s.starttls(context=ssl_context)
                 s.login(self.entry_mail_smtp_server.get(), self.entry_passsword_smtp_server.get())
-                s.sendmail(sender, recipients, msg.as_string())  
+                s.sendmail(sender, list(recipients), msg.as_string())  
                 self.logs_textbox.insert("0.0", datetime.now().strftime('%H:%M:%S') + " - Mail sent !\n")    
             except Exception as e:
                 self.logs_textbox.insert("0.0", datetime.now().strftime('%H:%M:%S') + " - Error: "+str(e)+"\n")
